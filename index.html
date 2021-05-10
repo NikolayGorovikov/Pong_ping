@@ -3,40 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>pingpong</title>
+    <!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
     <link href="pingpong.css" rel="stylesheet">
 </head>
 <body>
-    <div id="windowUp" style="display: none;">
-        <div class="notice">
-            <div class="closeBar"></div>
-            <form>
-                <input type="radio" name="buttons" value="arrow" checked>Управление с помощью клавишь <br>
-                <input type="radio" name="buttons" value="mouse">Управление с помощью мыши
-            </form>
-        </div>
+<div id="windowUp" style="display: none;">
+    <div class="notice">
+        <div class="closeBar"></div>
+        <form>
+            <input type="radio" name="buttons" value="arrow">Управление с помощью клавишь <br>
+            <input type="radio" name="buttons" value="mouse" checked>Управление с помощью мыши
+        </form>
     </div>
-    <div id="modes">Настройки(ctrl+x)</div>
-    <div id="menuButton">Меню(Space)</div>
-    <div id="scoreCover">Очки:<span id="score">0</span></div>
-    <div id="hearts"><span>3</span>♥</div>
-    <div id="levelName"></div>
-    <div id="effects">
+</div>
+<div id="modes">Настройки(ctrl+x)</div>
+<div id="menuButton">Меню<span class="forPC">(Space)</span></div>
+<div id="scoreCover">Очки:<span id="score">0</span></div>
+<div id="hearts"><span>3</span>♥</div>
+<div id="levelName"></div>
+<div id="effects">
+</div>
+<div id="menu" style="display: flex; transform: none;">
+    <div class="notice">
+        <h2>Привет!</h2>
+        <p>Эта игра является эксперементальным проэктом и скорее всего в ней есть баги, если вам осчастливится их обнаружить то я
+            буду рад если вы собщите о них оставив коммит.</p>
+        <div class="closeBar"></div>
+        <h2>Уровни</h2>
+        <div id="levels"></div>
+        <h2 id="infiniteGame">Бесконечная игра( рекорд:<span id="record">0</span> )</h2>
     </div>
-    <div id="menu" style="display: flex;">
-        <div class="notice">
-            <div class="closeBar"></div>
-            <h2>Уровни</h2>
-            <div id="levels"></div>
-            <h2 id="infiniteGame">Бесконечная игра( рекорд:<span id="record">0</span> )</h2>
-        </div>
-    </div>
-    <div id="pitch">
-        <div id="timer" style="display: none;"></div>
-        <div id="lose"></div>
-        <div id="kickerIn" style="left: 160px; background-color: black;"></div>
-        <div id="ball" style="left: 190px; bottom: 134px; width: 20px;"></div>
-    </div>
-    <script src="pingpong.js"></script>
+</div>
+<div id="pitch" style="overflow: hidden;">
+    <div id="timer" style="display: none;"></div>
+    <div id="lose"></div>
+    <div id="kickerIn" style="left: 160px; background-color: black;"></div>
+    <div id="ball" style="left: 190px; bottom: 134px;"></div>
+</div>
+<script src="pingpong.js"></script>
 <p>Извините, но на данный момент версия этого сайта для планшетов и мобильных устройств не доступна, вы все еще можете посетить сайт с компьтера</p>
 </body>
 </html>

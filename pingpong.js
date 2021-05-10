@@ -1,5 +1,6 @@
 "use strict";
-console.log(document.getElementById(`ball`).style.width);
+if (document.documentElement.clientWidth< 800) document.getElementById(`modes`).style.display = `none`;
+console.log(document.getElementById(`modes`).style.display, document.documentElement.clientWidth);
 document.addEventListener(`keydown`, function (event){
     if (event.code === `Space` && document.getElementById(`menu`).style.display === `none`) {
         if (document.getElementById(`windowUp`).style.display !== `none`) document.querySelector(`#windowUp .closeBar`).dispatchEvent(new PointerEvent(`pointerdown`));
@@ -18,15 +19,15 @@ document.addEventListener(`keydown`, function (event){
 
 });
 document.addEventListener(`keydown`, function(event){if (_info.stop) event.stopImmediatePropagation()});
-document.addEventListener(`keydown`, keyMove);
+document.getElementById(`kickerIn`).addEventListener(`pointerdown`, mouseClick);
 function keyMove(event){
     if (event.repeat) return;
-    if (_info.lastOne === `ArrowRight` && _info.time && event.code === `ArrowRight`) {press(`ArrowRight`, `ArrowLeft`, event, 2); _info.lastOne = null;clearTimeout(_info.timeouter);}
-    if (_info.lastOne === `ArrowLeft` && _info.time && event.code === `ArrowLeft`) {press(`ArrowLeft`, `ArrowRight`, event, -2); _info.lastOne = null;clearTimeout(_info.timeouter);}
-    if (event.code === `ArrowRight`) {press(`ArrowRight`, `ArrowLeft`, event, 1); _info.lastOne = `ArrowRight`; clearTimeout(_info.timeouter);_info.time=true; _info.timeouter = setTimeout(()=>_info.time=false, 500)}
-    else if (event.code === `ArrowLeft`) {press(`ArrowLeft`, `ArrowRight`, event, -1); _info.lastOne = `ArrowLeft`; clearTimeout(_info.timeouter);_info.time=true; _info.timeouter = setTimeout(()=>_info.time=false, 500)}
+    if (_info.lastOne === `ArrowRight` && _info.time && event.code === `ArrowRight`) {press(`ArrowRight`, `ArrowLeft`, event, 2*(pitch.getBoundingClientRect().width/400)); _info.lastOne = null;clearTimeout(_info.timeouter);}
+    if (_info.lastOne === `ArrowLeft` && _info.time && event.code === `ArrowLeft`) {press(`ArrowLeft`, `ArrowRight`, event, (-2)*(pitch.getBoundingClientRect().width/400)); _info.lastOne = null;clearTimeout(_info.timeouter);}
+    if (event.code === `ArrowRight`) {press(`ArrowRight`, `ArrowLeft`, event, pitch.getBoundingClientRect().width/400); _info.lastOne = `ArrowRight`; clearTimeout(_info.timeouter);_info.time=true; _info.timeouter = setTimeout(()=>_info.time=false, 500)}
+    else if (event.code === `ArrowLeft`) {press(`ArrowLeft`, `ArrowRight`, event, -(pitch.getBoundingClientRect().width/400)); _info.lastOne = `ArrowLeft`; clearTimeout(_info.timeouter);_info.time=true; _info.timeouter = setTimeout(()=>_info.time=false, 500)}
 }
-let gameMode = `arrow`;
+let gameMode = `mouse`;
 function press(arrow, secondArrow, event, num){
     clearTimeout(c);
     if (document.getElementById(`kickerIn`).style.backgroundColor === `black`) document.getElementById(`kickerIn`).style.backgroundColor = `white`;
@@ -40,10 +41,13 @@ function move(n){
     let a = {vector:n};
     if (_info.moveModifier)_info.moveModifier(a);
     n =a.vector;
-    let left = parseInt(document.getElementById(`kickerIn`).style.left)+n;
-    if (left < 1) left = 0;
-    if (left > document.getElementById(`pitch`).getBoundingClientRect().width-document.getElementById(`kickerIn`).getBoundingClientRect().width-1) left = left = document.getElementById(`pitch`).getBoundingClientRect().width-document.getElementById(`kickerIn`).getBoundingClientRect().width;
-    document.getElementById(`kickerIn`).style.left = left+`px`;
+    let left = document.getElementById(`kickerIn`).offsetLeft+n;
+    if (left < 0) left = 0;
+    if (left > document.getElementById(`pitch`).getBoundingClientRect().width-document.getElementById(`kickerIn`).getBoundingClientRect().width){
+        left = document.getElementById(`pitch`).getBoundingClientRect().width-document.getElementById(`kickerIn`).getBoundingClientRect().width;
+    }
+    if (n>0)document.getElementById(`kickerIn`).style.left = Math.ceil(left)+`px`;
+    else document.getElementById(`kickerIn`).style.left = Math.floor(left)+`px`;
 }
 function keyUp(event){
     if (event.code === `ArrowRight`||event.code===`ArrowLeft`){
@@ -62,7 +66,7 @@ let c;
 function moveMouse(event){
     let a = {vector:event.clientX - this[0]};
     if (_info.moveModifier)_info.moveModifier(a);
-    let left = parseFloat(event.target.style.left) + a.vector;
+    let left = event.target.offsetLeft + a.vector;
     event.target.speed = ((left-this[1])/(Date.now()-this[2]))*3;
     this[0] = event.clientX;
     this[1] = parseFloat(event.target.style.left);
@@ -91,7 +95,6 @@ function removeEffectPoint(effectId){
     deleteOwnTimer(effectId);
     document.getElementById(effectId).remove();
 }
-document.addEventListener(`keyup`, keyUp);
 function addEffectInterval(effect){
     _info.effects[effect+`Interval`] = setInterval(function (){
         if (_info.effects[effect+`Timer`] <= 0) {
@@ -163,11 +166,14 @@ function restoreAllEffectPoints(){
     }
 }
 function effect(type, timeEffect = _info.effects[type+`Time`]){
+    console.log(12222222222222222);
     let time = _info.effects[type+`Timer`];
+    console.log(`in effect`);
     _info.effects[type+`Timer`] += timeEffect;
     if (_info.effects[type+`MaxTime`] < _info.effects[type+`Timer`]) _info.effects[type+`Timer`] -= timeEffect;
     if (time <= 0){
         console.log(_info.effects[type+`Description`]);
+        console.log(`give time`);
         let descriptor = `<div class="effectInfo" id="${type}Holder"><div><div class="effectImg ${type}"></div><div class="effectText"><h1>${_info.effects[type+`MainName`]}</h1><p>${_info.effects[type+`Description`]}: <span class="timeHolder">${(_info.effects[type+`Timer`]/1000).toFixed(1)}сек</span></p><div></div>`;
         document.getElementById(`effects`).insertAdjacentHTML(`beforeend`, descriptor);
         if (document.getElementById(`${type}Holder`).querySelector(`.timeHolder`).innerHTML === `Infinityсек`) document.getElementById(`${type}Holder`).querySelector(`.timeHolder`).innerHTML = `Бесконечно`;
@@ -194,7 +200,7 @@ function moveEffectDown(effectId){
     else if (checkForDesk(effectId, elem, document.elementFromPoint(elem.getBoundingClientRect().x, elem.getBoundingClientRect().top + elem.getBoundingClientRect().height/2))) return;
     else if (checkForDesk(effectId, elem, document.elementFromPoint(elem.getBoundingClientRect().x+elem.getBoundingClientRect().width, elem.getBoundingClientRect().top + elem.getBoundingClientRect().height/2))) return;
     else{
-        elem.style.top=parseFloat(elem.style.top)+1.5+`px`;
+        elem.style.top=parseFloat(elem.style.top)+1.5*(pitch.getBoundingClientRect().width/400)+`px`;
     }
 }
 function beginBoard() {
@@ -224,7 +230,8 @@ function endBoard(){
 class Effect{
     constructor(name, time, funcBegin, funcEnd,mainName, description = `Осталось`,maxTime = Infinity) {
         this[name] = function (top, left, height, width, unknown){
-            let elem = `<div class="effect ${name} noHit" data-effectFunc="${name}" id="effect${this.effectAmount}" style="left:${(parseFloat(left)*2+parseFloat(width))/2-10}px; top: ${(parseFloat(top)*2+parseFloat(height))/2-10}px;"></div>`;
+            console.log(left, top);
+            let elem = `<div class="effect ${name} noHit" data-effectFunc="${name}" id="effect${this.effectAmount}" style="left:${(parseFloat(left)*2+parseFloat(width))/2-pitch.getBoundingClientRect().width/20/2}px; top: ${(parseFloat(top)*2+parseFloat(height))/2-pitch.getBoundingClientRect().width/20/2}px;"></div>`;
             if (unknown) elem.classList.remove(name);
             this.effectMoveTime[`effect`+this.effectAmount] = setInterval(moveEffectDown.bind(null, `effect`+this.effectAmount), 6);
             ++this.effectAmount;
@@ -257,8 +264,8 @@ function ballSpeedEnd(){
 }
 let pressed = new Set();
 let pitch = document.getElementById(`pitch`);
-let _info = {time: false, timeouter: false, vector: [1.5, -Math.sqrt(1.75)], moved: false, effects: {
-    effectMoveTime:{}, effectAmount: 0, effectTypes: []}, maxLeft: 3.5, vectorSpeed: 4, onHitItemFunc: new Set(), boomRadix: 32, data:{},
+let _info = {time: false, timeouter: false, vector: [(pitch.getBoundingClientRect().height/270)/Math.SQRT2, (pitch.getBoundingClientRect().height/270)/Math.SQRT2], moved: false, effects: {
+    effectMoveTime:{}, effectAmount: 0, effectTypes: []}, maxLeft: (pitch.getBoundingClientRect().height/270)*(pitch.getBoundingClientRect().height/270)*7/8, vectorSpeed: (pitch.getBoundingClientRect().height/270)*(pitch.getBoundingClientRect().height/270), onHitItemFunc: new Set(), boomRadix: 32*(pitch.getBoundingClientRect().width/400), data:{},
     moveModifier: undefined, jumpModifier: undefined, kf: 1, intervals:new Set()
 };
 function freezeDeskBegin(){
@@ -270,7 +277,7 @@ function freezeDeskEnd(){
 }
 function boomRemove(cords){
     let item = document.elementFromPoint(cords[0], cords[1]);
-    if (item.classList.contains(`item`)) elemTouch(item, true);
+    if (item?.classList?.contains(`item`)) elemTouch(item, true);
     // document.body.insertAdjacentHTML(`beforebegin`, `<div style="z-index: 1000; left: ${cords[0]}px; top: ${cords[1]}px; background-color: red; position: absolute; width: 3px; height: 3px;"></div>`);
 }
 function sin(a){
@@ -417,7 +424,7 @@ function deskGunBegin(){
         function () {
             if (_info.effectsPaused) return;
             if (i%2-1) {
-                let elem = `<div class="smallBall noHit" style="left: ${parseFloat(document.getElementById(`kickerIn`).style.left)+10}px; top: ${parseFloat(getComputedStyle(document.getElementById(`kickerIn`)).top)-20}px;"></div>`;
+                let elem = `<div class="smallBall noHit" style="left: ${parseFloat(document.getElementById(`kickerIn`).style.left)+parseFloat(getComputedStyle(document.querySelector(`.leftGun`)).left) + pitch.getBoundingClientRect().width/120}px; top: ${parseFloat(getComputedStyle(document.getElementById(`kickerIn`)).top)-pitch.getBoundingClientRect().width/20}px;"></div>`;
                 document.getElementById(`pitch`).insertAdjacentHTML(`beforeend`,elem);
                 elem = document.querySelector(`#pitch .smallBall:last-of-type`);
                 let a = setInterval(
@@ -428,13 +435,13 @@ function deskGunBegin(){
                         if (item.classList.contains(`item`)) {elemTouch(item, true); clearInterval(a); elem.remove();_info.data.gunIntervals.delete(a);return}
                         item = document.elementFromPoint(elem.getBoundingClientRect().x, elem.getBoundingClientRect().y)
                         if (item.classList.contains(`item`)) {elemTouch(item, true); clearInterval(a); elem.remove();_info.data.gunIntervals.delete(a); return}
-                        elem.style.top = parseFloat(elem.style.top)-3+`px`;
+                        elem.style.top = parseFloat(elem.style.top)-3*(pitch.getBoundingClientRect().width/400)+`px`;
                     }, 10
                 );
                 _info.data.gunIntervals.add(a);
             }
             else{
-                let elem = `<div class="smallBall noHit" style="left: ${parseFloat(document.getElementById(`kickerIn`).style.left)+document.getElementById(`kickerIn`).getBoundingClientRect().width-20}px; top: ${parseFloat(getComputedStyle(document.getElementById(`kickerIn`)).top)-20}px;"></div>`;
+                let elem = `<div class="smallBall noHit" style="left: ${parseFloat(document.getElementById(`kickerIn`).style.left)+parseFloat(getComputedStyle(document.querySelector(`.rightGun`)).left)+pitch.getBoundingClientRect().width/120}px; top: ${parseFloat(getComputedStyle(document.getElementById(`kickerIn`)).top)-20}px;"></div>`;
                 document.getElementById(`pitch`).insertAdjacentHTML(`beforeend`,elem);
                 elem = document.querySelector(`#pitch .smallBall:last-of-type`);
                 let a = setInterval(
@@ -445,7 +452,7 @@ function deskGunBegin(){
                         if (item.classList.contains(`item`)) {elemTouch(item, true); clearInterval(a); elem.remove();_info.data.gunIntervals.delete(a);return}
                         item = document.elementFromPoint(elem.getBoundingClientRect().x, elem.getBoundingClientRect().y)
                         if (item.classList.contains(`item`)) {elemTouch(item, true); clearInterval(a); elem.remove();_info.data.gunIntervals.delete(a); return}
-                        elem.style.top = parseFloat(elem.style.top)-3+`px`;
+                        elem.style.top = parseFloat(elem.style.top)-3*(pitch.getBoundingClientRect().width/400)+`px`;
                     }, 10
                 );
                 _info.data.gunIntervals.add(a);
@@ -491,8 +498,8 @@ for (let i of _info.effects.effectTypes){
     _info.pitches.unshift(new Function(`mainName`,
         "    _info.hearts = 3;\n" +
         "    _info.levelName = `Уровень ${mainName}`;\n" +
-        "    for (let i= 0; i<351; i+=50){\n" +
-        "        for (let j = 0; j<201; j+=20) document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class=\"item\" data-score=\"100\" style=\"left: ${i}px; top: ${j}px;\"></div>`);\n" +
+        "    for (let i= 0; i<8; i++){\n" +
+        "        for (let j = 0; j<10; j++) document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class=\"item\" data-score=\"100\" style=\"left: calc(${i} * (2 / 3) * ${pitch.getBoundingClientRect().height}px / 8); top: calc(${j} * ${pitch.getBoundingClientRect().height}px / 30); width: ${pitch.getBoundingClientRect().width/8}px; height:${pitch.getBoundingClientRect().width/20}px; \"></div>`);\n" +
         "    }\n" +
         "    for (let i of document.querySelectorAll(`.item`)) if (randomInteger(0,1)===randomInteger(0,1)) i.dataset.effecttype = this;"
     ).bind(i, mainName));
@@ -514,7 +521,6 @@ function giveColors(elements){
 }
 let func2 = (event)=>{
     if (_info.moved) return;
-    console.log(event.repeat, gameMode, event.key,event.ctrl);
     if (event.repeat && gameMode === `arrow` || (event.code === `KeyX` && event.ctrlKey) || event.code === `Space` || event.ctrlKey) {
         document.addEventListener(`keydown`, func2, {once: true});
         return;
@@ -539,9 +545,12 @@ function reset(i){
     _info.intervals.clear();
     document.getElementById(`hearts`).querySelector(`span`).innerHTML = 3;
     _info.hearts = 3;
-    ball.style.left = `${document.getElementById(`pitch`).getBoundingClientRect().width/2 - parseFloat(ball.style.width)/2}px`;
-    ball.style.bottom= `134px`;
-    document.getElementById(`kickerIn`).style.left = `${document.getElementById(`pitch`).getBoundingClientRect().width/2 - document.getElementById(`kickerIn`).getBoundingClientRect().width/2}px`;
+    let ballDisplay = ball.style.display;
+    ball.style.display = `block`;
+    ball.style.left = `calc(((2 / 3) * ${pitch.getBoundingClientRect().height}px - ${ball.getBoundingClientRect().width}px) / 2)`;
+    ball.style.bottom= document.getElementById(`kickerIn`).getBoundingClientRect().height + parseFloat(getComputedStyle(document.getElementById(`kickerIn`)).bottom)+`px`;
+    ball.style.display = ballDisplay;
+    document.getElementById(`kickerIn`).style.left = pitch.getBoundingClientRect().width/2 - document.getElementById(`kickerIn`).getBoundingClientRect().width/2+`px`;
     if (i) removeAll();
     removeEffects();
     _info.actualPitch();
@@ -584,9 +593,9 @@ function touch(elem){
         removeEffects();
         for (let i of _info.infinityEffects) effect(i, Infinity);
         console.log(_info.infinityEffects);
-        ball.style.left = `${document.getElementById(`pitch`).getBoundingClientRect().width/2 - parseFloat(ball.style.width)/2}px`;
-        ball.style.bottom= `134px`;
-        document.getElementById(`kickerIn`).style.left = `${document.getElementById(`pitch`).getBoundingClientRect().width/2 - document.getElementById(`kickerIn`).getBoundingClientRect().width/2}px`;
+        ball.style.left = `calc(((2 / 3) * ${pitch.getBoundingClientRect().height}px - ${ball.getBoundingClientRect().width}px) / 2)`;
+        ball.style.bottom= document.getElementById(`kickerIn`).getBoundingClientRect().height + parseFloat(getComputedStyle(document.getElementById(`kickerIn`)).bottom)+`px`;
+        document.getElementById(`kickerIn`).style.left = `calc(((2 / 3) * ${pitch.getBoundingClientRect().height}px) / 2 - ${document.getElementById(`kickerIn`).getBoundingClientRect().width}px / 2)`;
         clearInterval(a);
         _info.stop=false;
         if (gameMode === `arrow`) document.addEventListener(`keydown`, func2, {once:true});
@@ -603,11 +612,18 @@ function elemTouch(elem, preventEffects){
     console.log(Number(document.getElementById(`record`).innerHTML), Number(document.getElementById(`score`).innerHTML));
     if (Number(document.getElementById(`record`).innerHTML) < Number(document.getElementById(`score`).innerHTML) && _info.infiniteMode) document.getElementById(`record`).innerHTML = document.getElementById(`score`).innerHTML;
     if (_info.infiniteMode){
-        freePlaceSet.add(Math.trunc(parseFloat(elem.style.left)/50)+8*(parseFloat(elem.style.top)/20));
+        freePlaceSet.add(Number((parseFloat(elem.style.left)/(pitch.getBoundingClientRect().width/8)).toFixed(0))+8*(parseFloat(elem.style.top)/(pitch.getBoundingClientRect().width/20)).toFixed(0));
+        console.log(`.............................`);
+        console.log(elem);
+        console.log(elem.style.left, (pitch.getBoundingClientRect().width/8));
+        console.log((parseFloat(elem.style.left)/(pitch.getBoundingClientRect().width/8)).toFixed(0), 8*(parseFloat(elem.style.top)/(pitch.getBoundingClientRect().width/20)).toFixed(0));
+        console.log(Number((parseFloat(elem.style.left)/(pitch.getBoundingClientRect().width/8)).toFixed(0))+8*(parseFloat(elem.style.top)/(pitch.getBoundingClientRect().width/20)).toFixed(0))
+        console.log(`.............................`);
+
     }
     if (elem.matches(`[data-effecttype]`)){
         if (_info.unknownEffect) var unknown = true;
-        document.getElementById(`pitch`).insertAdjacentHTML(`beforeend`, _info.effects[elem.dataset.effecttype](elem.style.top, elem.style.left, elem.getBoundingClientRect().height, elem.getBoundingClientRect().width, unknown));
+        document.getElementById(`pitch`).insertAdjacentHTML(`beforeend`, _info.effects[elem.dataset.effecttype](elem.offsetTop, elem.offsetLeft, elem.getBoundingClientRect().height, elem.getBoundingClientRect().width, unknown));
     }
     if (_info.onHitItemFunc.size && !preventEffects){
         for (let j of _info.onHitItemFunc){
@@ -627,8 +643,8 @@ function elemTouch(elem, preventEffects){
     }
 }
 function ballMove(vector){
-    document.getElementById(`ball`).style.left = parseFloat(document.getElementById(`ball`).style.left)+vector[0]+`px`;
-    document.getElementById(`ball`).style.bottom = parseFloat(document.getElementById(`ball`).style.bottom)+vector[1]+`px`;
+    document.getElementById(`ball`).style.left = ball.getBoundingClientRect().left-pitch.getBoundingClientRect().left+vector[0]+`px`;
+    document.getElementById(`ball`).style.bottom = parseFloat(getComputedStyle(ball).bottom)+vector[1]+`px`;
 }
 let gameModeFunc = {
     arrowClear: [{function: keyMove, listener: document, special: {}, event: `keydown`}, {function: keyUp, listener: document, special: {}, event: `keyup`}, {function: func2, listener: document, special: {once: true}, event: `keydown`}],
@@ -649,10 +665,8 @@ function pauseGame(){
     pauseEffects();
 }
 document.getElementById(`modes`).addEventListener(`pointerdown`, function (){
-    console.log(124);
     pauseGame();
     document.getElementById(`windowUp`).style.display = ``;
-
 });
 document.querySelector(`#windowUp .closeBar`).addEventListener(`pointerdown`, function (){
     document.getElementById(`windowUp`).style.display = `none`;
@@ -687,23 +701,23 @@ function checkTouch(position, vector){
     try{
         if (vector[1] > 0 && vector[0] > 0){
             let elem = document.elementFromPoint(position[0]+width/2+width/2/Math.SQRT2, position[1] + width/2 - width/2/Math.SQRT2);
-            if (elem !== pitch && !elem.classList.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); vector[1]=-vector[1]; vector[0]=-vector[0]; touch(elem);}
+            if (elem !== pitch && !elem?.classList?.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); vector[1]=-vector[1]; vector[0]=-vector[0]; touch(elem);}
         }
         else if (vector[1] > 0 && vector[0] < 0){
             let elem = document.elementFromPoint(position[0]+width/2-width/2/Math.SQRT2, position[1] + width/2 - width/2/Math.SQRT2);
-            if (elem !== pitch && !elem.classList.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); vector[1]=-vector[1]; vector[0]=-vector[0]; touch(elem);}
+            if (elem !== pitch && !elem?.classList?.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); vector[1]=-vector[1]; vector[0]=-vector[0]; touch(elem);}
         }
         else if (vector[1] < 0 && vector[0] > 0){
             let elem = document.elementFromPoint(position[0]+width/2+width/2/Math.SQRT2, position[1] + width/2 + width/2/Math.SQRT2);
-            if (elem !== pitch && !elem.classList.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); vector[1]=-vector[1]; vector[0]=-vector[0]; touch(elem);}
+            if (elem !== pitch && !elem?.classList?.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); vector[1]=-vector[1]; vector[0]=-vector[0]; touch(elem);}
         }
         else if (vector[1] < 0 && vector[0] < 0){
             let elem = document.elementFromPoint(position[0]+width/2-width/2/Math.SQRT2, position[1] + width/2 + width/2/Math.SQRT2)
-            if (elem !== pitch && !elem.classList.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); vector[1]=-vector[1]; vector[0]=-vector[0]; touch(elem);}
+            if (elem !== pitch && !elem?.classList?.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); vector[1]=-vector[1]; vector[0]=-vector[0]; touch(elem);}
         }
         if (vector[1]>0){
             let elem = document.elementFromPoint(position[0]+width/2, position[1])
-            if (elem !== pitch && !elem.classList.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); _info.vector[1]=-_info.vector[1]; touch(elem)}
+            if (elem !== pitch && !elem?.classList?.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); _info.vector[1]=-_info.vector[1]; touch(elem)}
         }
         else{
             let elem = document.elementFromPoint(position[0]+width/2, position[1]+width);
@@ -739,11 +753,11 @@ function checkTouch(position, vector){
         }
         if (vector[0]>0){
             let elem = document.elementFromPoint(position[0]+width, position[1]+width/2)
-            if (elem !== pitch && !elem.classList.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector);_info.vector[0]=-_info.vector[0]; touch(elem)}
+            if (elem !== pitch && !elem?.classList?.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector);_info.vector[0]=-_info.vector[0]; touch(elem)}
         }
         else{
             let elem = document.elementFromPoint(position[0], position[1]+width/2)
-            if (elem !== pitch && !elem.classList.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector);_info.vector[0]=-_info.vector[0]; touch(elem)}
+            if (elem !== pitch && !elem?.classList?.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector);_info.vector[0]=-_info.vector[0]; touch(elem)}
         }
     }
     catch (error){
@@ -753,7 +767,6 @@ function checkTouch(position, vector){
     if (_info.lose) return;
     document.getElementById(`ball`).style.display = `block`;
 }
-// document.addEventListener(`keydown`, func3, {once:true});
 let a;
 giveColors(document.querySelectorAll(`.item`));
 function MakeLevel(number){
@@ -793,7 +806,6 @@ for (let i = 0; i < _info.pitches.length; i++) {
 }
 document.querySelector(`#menu .closeBar`).addEventListener(`pointerdown`, function (){
     document.getElementById(`menu`).style.display = `none`;
-    console.log(_info.moved);
     if (_info.moved){
         resetGame();
     }
@@ -802,8 +814,8 @@ document.querySelector(`#menu .closeBar`).addEventListener(`pointerdown`, functi
     }
 });
 document.getElementById(`menuButton`).addEventListener(`pointerdown`, function () {
-    document.getElementById(`menu`).style.display = `flex`;
     pauseGame();
+    document.getElementById(`menu`).style.display = `flex`;
 });
 document.getElementById(`levels`).addEventListener(`pointerdown`, function (event) {
     let element = event.target;
@@ -818,14 +830,15 @@ document.getElementById(`levels`).addEventListener(`pointerdown`, function (even
 });
 let infiniteTimeout, infiniteTime = 2000, freePlaceSet = new Set();
 function addRandom(){
-    _info.infiniteTime+=infiniteTime;
     if (!freePlaceSet.size) return;
     let item = Array.from(freePlaceSet)[randomInteger(0, freePlaceSet.size)];
-    let cords = [(item%8)*50, Math.trunc(item/8)*20];
+    console.log(item);
+    console.log(freePlaceSet);
+    let cords = [(item%8)*pitch.getBoundingClientRect().width/8, Math.trunc(item/8)*pitch.getBoundingClientRect().width/20];
     freePlaceSet.delete(item);
     _info.difficulties[_info.actualDifficulty](cords);
+    _info.infiniteTime+=infiniteTime;
     if (_info.infiniteTime > 20000 && _info.difficulties.length-1>_info.actualDifficulty) {
-        console.log(12345678);
         _info.actualDifficulty++;
         clearInterval(infiniteTimeout);
         infiniteTime-=250;
@@ -842,6 +855,7 @@ function infiniteGame(i){
         _info.actualPitch = function (){
             _info.levelName = `Бесконечная игра`;
             _info.hearts = 3;
+            infiniteTime = 2000;
             freePlaceSet.clear();
             for (let i = 0; i<144; i++) freePlaceSet.add(i);for (let i = 0; i<10; i++) {addRandom();_info.infiniteTime = 0;}
         }
@@ -851,6 +865,7 @@ function infiniteGame(i){
         clearInterval(infiniteTimeout);
         _info.infiniteMode = false;
         _info.infiniteTime = 0;
+        infiniteTime = 2000;
     }
 }
 _info.infinityEffects = new Set();
@@ -864,8 +879,9 @@ _info.difficulties = [
         document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${100*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
         makeColor(document.querySelector(`.item:first-of-type`));
         if (randomInteger(1,9) === randomInteger(1,9)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
-        if (_info.infiniteTime === 0) effect(`ballExtraSpeed`, Infinity);
-        _info.infinityEffects.add(`ballExtraSpeed`);
+        effect(`ballExtraSpeed`, Infinity);
+        if (_info.infiniteTime === 0)_info.infinityEffects.add(`ballExtraSpeed`);
+        console.log(123);
     },
     function (cords){
         document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${100*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
@@ -892,8 +908,8 @@ _info.difficulties = [
         document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${100*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
         makeColor(document.querySelector(`.item:first-of-type`));
         if (randomInteger(1,6) === randomInteger(1,6)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
-        if (_info.infiniteTime === 0)effect(`brokenGame`, Infinity);
-        _info.infinityEffects.add(`brokenGame`);
+        if (_info.infiniteTime === 0)effect(`boomHit`, Infinity);
+        _info.infinityEffects.add(`boomHit`);
     },
 ];
 document.getElementById(`infiniteGame`).addEventListener(`pointerdown`, function(){
