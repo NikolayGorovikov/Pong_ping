@@ -70,8 +70,6 @@ function keyUp(event){
     }
 }
 let c;
-document.addEventListener(`click`, (e)=>e.preventDefault());
-document.addEventListener(`mousemove`, (e)=>e.preventDefault());
 function moveMouse(event){
     let a = {vector:event.clientX - this[0]};
     if (_info.moveModifier)_info.moveModifier(a);

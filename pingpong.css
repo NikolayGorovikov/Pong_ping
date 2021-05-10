@@ -239,7 +239,7 @@ h2, h3{
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
-    overflow-y: scroll;
+    overflow: auto;
 }
 #menu h2{
     text-indent: 30px;
@@ -584,4 +584,12 @@ body>p{
 }
 #kickerIn{
     touch-action: none;
+}
+* {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
