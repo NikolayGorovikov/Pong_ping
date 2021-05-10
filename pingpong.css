@@ -416,9 +416,8 @@ body>p{
         width: 100vw;
         height: calc(100vw * 3 / 2);
         position: relative;
-        margin: calc(100vh - 100vw * 3 / 2 - 5vh) auto 0 auto;
+        top: calc(100vh - (100vw * 3 / 2) * 12 / 14);
         left: 0;
-        top: 0;
         box-shadow: 0 0 0 5px black;
     }
     #kickerIn{
@@ -503,7 +502,7 @@ body>p{
     #effects{
         width: 90vw;
         top: calc(55px + 100vw * 3 / 2 / 20);
-        height: calc((100vh - 100vw * 3 / 2 - 5vh) - (55px + 100vw * 3 / 2 / 20) - 10px);
+        height: calc((100vh - 100vw * 3 / 2 * 12 / 14) - (55px + 100vw * 3 / 40) - 10px);
         left: 5vw;
         border-width: 5px;
         border-radius: 10px;
