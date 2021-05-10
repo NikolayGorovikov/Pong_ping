@@ -524,14 +524,17 @@ body>p{
         position: absolute;
         width: calc(100% - (50px - 6px - 6px) - 6px - 6px);
         height: calc(50px - 6px - 6px);
-        top: 5px;
-        right: 5px;
+        top: 3px;
+        right: 3px;
     }
     .effectText > h1{
-        font-size:  calc(100vw * 3 / 2 / 40);
+        margin-top: 2px;
+        font-size:  calc((50px - 6px - 6px) / 4 + ((90vw - 10px) / 2) / 100);
+        line-height: 0.8em;
     }
     .effectText > p{
-        font-size:  calc(100vw * 3 / 2 / 40)
+        font-size:  calc((50px - 6px - 6px) / 3 + ((90vw - 10px) / 2) / 100);
+        margin-top: 3px;
     }
     .timeCenter{
         text-align: center;

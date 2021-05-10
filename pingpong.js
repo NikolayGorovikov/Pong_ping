@@ -2,8 +2,8 @@
 document.documentElement.style.height = window.innerHeight+`px`;
 document.body.style.height = window.innerHeight+`px`;
 if (document.getElementById(`modes`).getBoundingClientRect().width == 0){
-    document.getElementById(`pitch`).style.top = window.innerHeight-window.innerWidth*(3/2)*(12/14)+`px`;
-    document.getElementById(`effects`).style.height = (window.innerHeight - window.innerWidth * (3 / 2) * (12 / 14)) - (55 + window.innerWidth * (3 / 40)) - 10 + `px`;
+    document.getElementById(`pitch`).style.top = window.innerHeight-window.innerWidth*(3/2)*(16/18)+`px`;
+    document.getElementById(`effects`).style.height = (window.innerHeight - window.innerWidth * (3 / 2) * (16 / 18)) - (55 + window.innerWidth * (3 / 40)) - 10 + `px`;
     document.querySelector(`#menu .notice`).style.height = window.innerHeight + `px`;
 }
 if (document.documentElement.clientWidth< 800) document.getElementById(`modes`).style.display = `none`;
@@ -70,6 +70,8 @@ function keyUp(event){
     }
 }
 let c;
+document.addEventListener(`click`, (e)=>e.preventDefault());
+document.addEventListener(`mousemove`, (e)=>e.preventDefault());
 function moveMouse(event){
     let a = {vector:event.clientX - this[0]};
     if (_info.moveModifier)_info.moveModifier(a);
@@ -483,18 +485,18 @@ document.addEventListener(`reset`, function (){
 });
 // _info.addNewEffect(`brokenJump`, 8000, brokenJumpBegin, brokenJumpEnd);
 _info.addNewEffect(`deskGun`, 5000, deskGunBegin, deskGunEnd, `Доска-пулемет`);
-_info.addNewEffect(`brokenGame`, 8000, brokenBegin, brokenEnd, `Сломанное управление`);
-_info.addNewEffect(`poison`, 5000, randomItems, removePoisonedItems, `Ядовитый мяч`, `Фишки помрут через`, 5000);
+_info.addNewEffect(`brokenGame`, 8000, brokenBegin, brokenEnd, `Сломанная игра`);
+_info.addNewEffect(`poison`, 5000, randomItems, removePoisonedItems, `Ядовитый шар`, `Фишки помрут через`, 5000);
 _info.addNewEffect(`noDead`, 10000, ()=>document.addEventListener(`lose`, regen), ()=>document.removeEventListener(`lose`, regen), `Бессметрите`);
-_info.addNewEffect(`biggerBall`, 10000, biggerBallBegin, biggerBallEnd, `Большой мяч`);
-_info.addNewEffect(`extraLife`, 0, ()=>{if (_info.hearts<3) document.getElementById(`hearts`).querySelector(`span`).innerHTML = ++_info.hearts;}, null, `Дополнительная жизнь`);
+_info.addNewEffect(`biggerBall`, 10000, biggerBallBegin, biggerBallEnd, `Большой шар`);
+_info.addNewEffect(`extraLife`, 0, ()=>{if (_info.hearts<3) document.getElementById(`hearts`).querySelector(`span`).innerHTML = ++_info.hearts;}, null, `Доп. жизнь`);
 _info.addNewEffect(`hideItems`, 5000,hideItemsBegin,hideItemsEnd, `Невидимые фишки`);
-_info.addNewEffect(`ramBehaviour`, 5000, ramBegin, ramEnd, `Огненный мяч`);
-_info.addNewEffect(`boomHit`, 10000, boomBegin, boomEnd, `Взрывающийся шар`);
+_info.addNewEffect(`ramBehaviour`, 5000, ramBegin, ramEnd, `Огненный шар`);
+_info.addNewEffect(`boomHit`, 10000, boomBegin, boomEnd, `Шар-бомба`);
 _info.addNewEffect(`doubleScore`,8000, ()=>{for (let i of document.querySelectorAll(`.item`)) i.dataset.score*=2; _info.kf = 2}, ()=>{for (let i of document.querySelectorAll(`.item`)) i.dataset.score/=2; _info.kf = 1}, `Двойные очки`);
 _info.addNewEffect(`freezeDesk`, 2000, freezeDeskBegin, freezeDeskEnd, `Неподвижная доска`);
-_info.addNewEffect(`ballInvisibility`, 3000, ()=>ball.style.visibility = `hidden`, ()=>ball.style.visibility = `visible`, `Невидимый мяч`);
-_info.addNewEffect(`ballExtraSpeed`, 8000, ballSpeedBegin, ballSpeedEnd, `Быстрый мяч`, );
+_info.addNewEffect(`ballInvisibility`, 3000, ()=>ball.style.visibility = `hidden`, ()=>ball.style.visibility = `visible`, `Невидимый шар`);
+_info.addNewEffect(`ballExtraSpeed`, 8000, ballSpeedBegin, ballSpeedEnd, `Быстрый шар`, );
 _info.addNewEffect(`biggerDesk`, 10000, beginBoard, endBoard, `Большая доска`, );
 let ball = document.getElementById(`ball`);
 _info.hearts = 3;
@@ -503,7 +505,7 @@ for (let i of _info.effects.effectTypes){
     let mainName = _info.effects[i+`MainName`];
     _info.pitches.unshift(new Function(`mainName`,
         "    _info.hearts = 3;\n" +
-        "    _info.levelName = `Уровень ${mainName}`;\n" +
+        "    _info.levelName = `${mainName}`;\n" +
         "    for (let i= 0; i<8; i++){\n" +
         "        for (let j = 0; j<10; j++) document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class=\"item\" data-score=\"100\" style=\"left: calc(${i} * (2 / 3) * ${pitch.getBoundingClientRect().height}px / 8); top: calc(${j} * ${pitch.getBoundingClientRect().height}px / 30); width: ${pitch.getBoundingClientRect().width/8}px; height:${pitch.getBoundingClientRect().width/20}px; \"></div>`);\n" +
         "    }\n" +
@@ -551,11 +553,9 @@ function reset(i){
     _info.intervals.clear();
     document.getElementById(`hearts`).querySelector(`span`).innerHTML = 3;
     _info.hearts = 3;
-    let ballDisplay = ball.style.display;
     ball.style.display = `block`;
     ball.style.left = `calc(((2 / 3) * ${pitch.getBoundingClientRect().height}px - ${ball.getBoundingClientRect().width}px) / 2)`;
     ball.style.bottom= document.getElementById(`kickerIn`).getBoundingClientRect().height + parseFloat(getComputedStyle(document.getElementById(`kickerIn`)).bottom)+`px`;
-    ball.style.display = ballDisplay;
     document.getElementById(`kickerIn`).style.left = pitch.getBoundingClientRect().width/2 - document.getElementById(`kickerIn`).getBoundingClientRect().width/2+`px`;
     if (i) removeAll();
     removeEffects();
