@@ -1,4 +1,6 @@
 "use strict";
+document.documentElement.style.height = window.innerHeight+`px`;
+document.body.style.height = window.innerHeight+`px`;
 if (document.documentElement.clientWidth< 800) document.getElementById(`modes`).style.display = `none`;
 console.log(document.getElementById(`modes`).style.display, document.documentElement.clientWidth);
 document.addEventListener(`keydown`, function (event){
