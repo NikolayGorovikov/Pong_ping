@@ -570,6 +570,9 @@ body>p{
     #menu h2{
         font-size: calc(100vw * 3 / 2 / 12);
     }
+    #menu h2:last-of-type{
+        font-size: calc(100vw * 3 / 2 / 16);
+    }
     #menu h2:first-child{
         text-align: left;
         margin-top: 10px;

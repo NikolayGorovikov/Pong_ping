@@ -183,7 +183,8 @@ function effect(type, timeEffect = _info.effects[type+`Time`]){
         console.log(`give time`);
         let descriptor = `<div class="effectInfo" id="${type}Holder"><div><div class="effectImg ${type}"></div><div class="effectText"><h1>${_info.effects[type+`MainName`]}</h1><p class="timeCenter"><span class="forPC">${_info.effects[type+`Description`]}: </span><span class="timeHolder">${(_info.effects[type+`Timer`]/1000).toFixed(1)}сек</span></p><div></div>`;
         document.getElementById(`effects`).insertAdjacentHTML(`beforeend`, descriptor);
-        document.getElementById(`${type}Holder`).scrollIntoView(true);
+        // document.getElementById(`${type}Holder`).scrollIntoView(true);
+        // добавить эту штуку по выбору пользователя
         if (document.getElementById(`${type}Holder`).querySelector(`.timeHolder`).innerHTML === `Infinityсек`) document.getElementById(`${type}Holder`).querySelector(`.timeHolder`).innerHTML = `Бесконечно`;
         if (typeof _info.effects[type+`Do`] === `function`) _info.effects[type+`Do`]();
         addEffectInterval(type);
@@ -558,6 +559,10 @@ function reset(i){
     document.getElementById(`kickerIn`).style.left = pitch.getBoundingClientRect().width/2 - document.getElementById(`kickerIn`).getBoundingClientRect().width/2+`px`;
     if (i) removeAll();
     removeEffects();
+    _info.vectorSpeed= (pitch.getBoundingClientRect().height/270)*(pitch.getBoundingClientRect().height/270);
+    _info.vector = [Math.sqrt(_info.vectorSpeed)/Math.SQRT2, Math.sqrt(_info.vectorSpeed)/Math.SQRT2];
+    _info.previousVector = [].concat(_info.vector);
+    _info.maxLeft = _info.vectorSpeed*7/8;
     _info.actualPitch();
     document.getElementById(`levelName`).innerText = _info.levelName;
     giveColors(document.querySelectorAll(`.item`));
@@ -846,7 +851,11 @@ function addRandom(){
     if (_info.infiniteTime > 20000 && _info.difficulties.length-1>_info.actualDifficulty) {
         _info.actualDifficulty++;
         clearInterval(infiniteTimeout);
-        infiniteTime-=250;
+        if (infiniteTime < 400) return;
+        else if (infiniteTime <= 500) infiniteTime-=50;
+        else if (infiniteTime <= 700) infiniteTime-=100;
+        else if (infiniteTime <= 1000) infiniteTime-=150;
+        else infiniteTime-=250;
         _info.infiniteTime = 0;
         infiniteTimeout = setInterval(addRandom, infiniteTime);
     }
@@ -908,6 +917,7 @@ _info.difficulties = [
         if (randomInteger(1,6) === randomInteger(1,6)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
         if (_info.infiniteTime === 0)effect(`biggerBall`, Infinity);
         _info.infinityEffects.add(`biggerBall`);
+        effect(`extraLife`, 0);
     },
     function (cords){
         document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${100*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
@@ -916,7 +926,96 @@ _info.difficulties = [
         if (_info.infiniteTime === 0)effect(`boomHit`, Infinity);
         _info.infinityEffects.add(`boomHit`);
     },
+    function (cords){
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${200*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
+        makeColor(document.querySelector(`.item:first-of-type`));
+        if (randomInteger(1,5) === randomInteger(1,5)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
+    },
+    function (cords){
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${250*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
+        makeColor(document.querySelector(`.item:first-of-type`));
+        if (randomInteger(1,4) === randomInteger(1,4)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
+        if (_info.infiniteTime === 0)effect(`hideItems`, Infinity);
+        _info.infinityEffects.add(`hideItems`);
+    },
+    function (cords){
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
+        makeColor(document.querySelector(`.item:first-of-type`));
+        if (randomInteger(1,4) === randomInteger(1,4)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
+        removeEffect(`hideItems`);
+        _info.infinityEffects.delete(`hideItems`);
+        effect(`extraLife`, 0);
+    },
+    function (cords){
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
+        makeColor(document.querySelector(`.item:first-of-type`));
+        if (randomInteger(1,3) === randomInteger(1,3)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
+        if (_info.infiniteTime === 0)effect(`brokenGame`, Infinity);
+        _info.infinityEffects.add(`brokenGame`);
+    },
+    function (cords){
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
+        makeColor(document.querySelector(`.item:first-of-type`));
+        if (randomInteger(1,4) === randomInteger(1,4)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
+        removeEffect(`brokenGame`);
+        _info.infinityEffects.delete(`brokenGame`);
+        effect(`extraLife`, 0);
+    },
+    function (cords){
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
+        makeColor(document.querySelector(`.item:first-of-type`));
+        if (randomInteger(1,3) === randomInteger(1,3)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
+    },
+    function (cords){
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
+        makeColor(document.querySelector(`.item:first-of-type`));
+        if (randomInteger(1,4) === randomInteger(1,4)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
+        pauseGame();
+        document.getElementById(`timer`).style.display = `block`;
+        document.getElementById(`timer`).style.width = `100%`;
+        document.getElementById(`timer`).style.fontSize = `calc(100vw * 3 / 2 / 16)`;
+        document.addEventListener(`pointerdown`, preventAll, true);
+        setTimeout(()=>{
+            document.getElementById(`timer`).innerHTML = ``;
+            setTimeout(()=>{
+                document.getElementById(`timer`).innerHTML = ``;
+                setTimeout(()=>{
+                        document.getElementById(`timer`).innerHTML = ``;
+                        setTimeout(()=>{
+                            document.getElementById(`timer`).style.width = ``;
+                            document.getElementById(`timer`).style.fontSize = ``;
+                            resetGame();
+                            _info.actualDifficulty++;
+                            document.removeEventListener(`pointerdown`, preventAll, true);
+                            _info.vectorSpeed = _info.vectorSpeed*2;
+                            _info.vector = [Math.sqrt(_info.vectorSpeed)/Math.SQRT2, Math.sqrt(_info.vectorSpeed)/Math.SQRT2];
+                            _info.previousVector = [].concat(_info.vector);
+                            _info.maxLeft = _info.vectorSpeed*7/8;
+                        }, talk(document.getElementById(`timer`), `Хм, думаю что гиперскорость тебе поможет)`))
+                    }, talk(document.getElementById(`timer`), `Но с этим нужно заканчивать.`)
+                )
+            }, talk(document.getElementById(`timer`), `Ты смело можешь собой гордиться`))
+        }, talk(document.getElementById(`timer`), `Неплохо, очень не плохо`));
+    },
+    function (cords){
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${1000*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
+        makeColor(document.querySelector(`.item:first-of-type`));
+        if (randomInteger(1,3) === randomInteger(1,3)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
+    },
 ];
+function preventAll(event){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+}
+function talk(elem, frase){
+    let i = 0;
+    let a = setInterval(()=>{
+        elem.innerHTML+=frase[i];
+        i++;
+        if (frase.length-1 < i) clearInterval(a);
+    }, 50);
+    return frase.length*50+1500;
+}
 document.getElementById(`infiniteGame`).addEventListener(`pointerdown`, function(){
     document.getElementById(`menu`).style.display = `none`;
     document.dispatchEvent(new Event(`lose`));
