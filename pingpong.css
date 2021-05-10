@@ -552,9 +552,10 @@ body>p{
     }
     #menu{
         background-color: transparent;
-        transition-property: transform;
-        transition-duration: 1s;
-        transform: translateX(100vw);
+        margin: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
     }
     #menu .notice{
         width: 100%;!important;
