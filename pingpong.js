@@ -183,6 +183,7 @@ function effect(type, timeEffect = _info.effects[type+`Time`]){
         console.log(`give time`);
         let descriptor = `<div class="effectInfo" id="${type}Holder"><div><div class="effectImg ${type}"></div><div class="effectText"><h1>${_info.effects[type+`MainName`]}</h1><p class="timeCenter"><span class="forPC">${_info.effects[type+`Description`]}: </span><span class="timeHolder">${(_info.effects[type+`Timer`]/1000).toFixed(1)}сек</span></p><div></div>`;
         document.getElementById(`effects`).insertAdjacentHTML(`beforeend`, descriptor);
+        document.getElementById(`${type}Holder`).scrollIntoView(true);
         if (document.getElementById(`${type}Holder`).querySelector(`.timeHolder`).innerHTML === `Infinityсек`) document.getElementById(`${type}Holder`).querySelector(`.timeHolder`).innerHTML = `Бесконечно`;
         if (typeof _info.effects[type+`Do`] === `function`) _info.effects[type+`Do`]();
         addEffectInterval(type);
