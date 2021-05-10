@@ -4,6 +4,7 @@ document.body.style.height = window.innerHeight+`px`;
 if (document.getElementById(`modes`).getBoundingClientRect().width == 0){
     document.getElementById(`pitch`).style.top = window.innerHeight-window.innerWidth*(3/2)*(12/14)+`px`;
     document.getElementById(`effects`).style.height = (window.innerHeight - window.innerWidth * (3 / 2) * (12 / 14)) - (55 + window.innerWidth * (3 / 40)) - 10 + `px`;
+    document.querySelector(`#menu .notice`).style.height = window.innerHeight + `px`;
 }
 if (document.documentElement.clientWidth< 800) document.getElementById(`modes`).style.display = `none`;
 console.log(document.getElementById(`modes`).style.display, document.documentElement.clientWidth);
