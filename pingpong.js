@@ -197,11 +197,12 @@ function checkForDesk(effectId, elem, elemTouch){
 }
 function moveEffectDown(effectId){
     let elem = document.getElementById(`${effectId}`);
-    let elemTouch = document.elementFromPoint(elem.getBoundingClientRect().x+elem.getBoundingClientRect().width/2, elem.getBoundingClientRect().bottom);
-    if (checkForDesk(effectId, elem, document.elementFromPoint(elem.getBoundingClientRect().x+elem.getBoundingClientRect().width/2, elem.getBoundingClientRect().bottom))) return;
-    else if (checkForDesk(effectId, elem, document.elementFromPoint(elem.getBoundingClientRect().x, elem.getBoundingClientRect().top + elem.getBoundingClientRect().height/2))) return;
-    else if (checkForDesk(effectId, elem, document.elementFromPoint(elem.getBoundingClientRect().x+elem.getBoundingClientRect().width, elem.getBoundingClientRect().top + elem.getBoundingClientRect().height/2))) return;
+    if (checkForDesk(effectId, elem, document.elementFromPoint(elem.getBoundingClientRect().x+elem.getBoundingClientRect().width/2, elem.getBoundingClientRect().bottom+1))) return;
+    else if (checkForDesk(effectId, elem, document.elementFromPoint(elem.getBoundingClientRect().x-1, elem.getBoundingClientRect().top + elem.getBoundingClientRect().height/2))) return;
+    else if (checkForDesk(effectId, elem, document.elementFromPoint(elem.getBoundingClientRect().x+elem.getBoundingClientRect().width+1, elem.getBoundingClientRect().top + elem.getBoundingClientRect().height/2))) return;
+    else if (checkForDesk(effectId, elem, document.elementFromPoint(elem.getBoundingClientRect().x+elem.getBoundingClientRect().width/2, elem.getBoundingClientRect().top+1))) return;
     else{
+        elem.style.display = `block`;
         elem.style.top=parseFloat(elem.style.top)+1.5*(pitch.getBoundingClientRect().width/400)+`px`;
     }
 }
