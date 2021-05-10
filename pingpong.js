@@ -1,6 +1,11 @@
 "use strict";
 document.documentElement.style.height = window.innerHeight+`px`;
 document.body.style.height = window.innerHeight+`px`;
+setTimeout(()=>{
+    if (document.getElementById(`modes`).getBoundingClientRect().width == 0){
+        document.getElementById(`pitch`).style.marginTop = window.innerHeight-window.innerWidth*3/2-0.05*window.innerHeight+`px`;
+    }
+}, 200);
 if (document.documentElement.clientWidth< 800) document.getElementById(`modes`).style.display = `none`;
 console.log(document.getElementById(`modes`).style.display, document.documentElement.clientWidth);
 document.addEventListener(`keydown`, function (event){
