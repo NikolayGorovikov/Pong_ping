@@ -176,7 +176,7 @@ function effect(type, timeEffect = _info.effects[type+`Time`]){
     if (time <= 0){
         console.log(_info.effects[type+`Description`]);
         console.log(`give time`);
-        let descriptor = `<div class="effectInfo" id="${type}Holder"><div><div class="effectImg ${type}"></div><div class="effectText"><h1>${_info.effects[type+`MainName`]}</h1><p>${_info.effects[type+`Description`]}: <span class="timeHolder">${(_info.effects[type+`Timer`]/1000).toFixed(1)}сек</span></p><div></div>`;
+        let descriptor = `<div class="effectInfo" id="${type}Holder"><div><div class="effectImg ${type}"></div><div class="effectText"><h1>${_info.effects[type+`MainName`]}</h1><p class="timeCenter"><span class="forPC">${_info.effects[type+`Description`]}: </span><span class="timeHolder">${(_info.effects[type+`Timer`]/1000).toFixed(1)}сек</span></p><div></div>`;
         document.getElementById(`effects`).insertAdjacentHTML(`beforeend`, descriptor);
         if (document.getElementById(`${type}Holder`).querySelector(`.timeHolder`).innerHTML === `Infinityсек`) document.getElementById(`${type}Holder`).querySelector(`.timeHolder`).innerHTML = `Бесконечно`;
         if (typeof _info.effects[type+`Do`] === `function`) _info.effects[type+`Do`]();
@@ -197,10 +197,8 @@ function checkForDesk(effectId, elem, elemTouch){
 }
 function moveEffectDown(effectId){
     let elem = document.getElementById(`${effectId}`);
-    if (checkForDesk(effectId, elem, document.elementFromPoint(elem.getBoundingClientRect().x+elem.getBoundingClientRect().width/2, elem.getBoundingClientRect().bottom+1))) return;
-    else if (checkForDesk(effectId, elem, document.elementFromPoint(elem.getBoundingClientRect().x-1, elem.getBoundingClientRect().top + elem.getBoundingClientRect().height/2))) return;
-    else if (checkForDesk(effectId, elem, document.elementFromPoint(elem.getBoundingClientRect().x+elem.getBoundingClientRect().width+1, elem.getBoundingClientRect().top + elem.getBoundingClientRect().height/2))) return;
-    else if (checkForDesk(effectId, elem, document.elementFromPoint(elem.getBoundingClientRect().x+elem.getBoundingClientRect().width/2, elem.getBoundingClientRect().top+1))) return;
+    if (checkForDesk(effectId, elem, document.elementFromPoint(elem.getBoundingClientRect().x, elem.getBoundingClientRect().bottom))) return;
+    else if (checkForDesk(effectId, elem, document.elementFromPoint(elem.getBoundingClientRect().right, elem.getBoundingClientRect().bottom))) return;
     else{
         elem.style.display = `block`;
         elem.style.top=parseFloat(elem.style.top)+1.5*(pitch.getBoundingClientRect().width/400)+`px`;
