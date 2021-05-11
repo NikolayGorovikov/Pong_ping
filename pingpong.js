@@ -891,7 +891,6 @@ _info.difficulties = [
         if (randomInteger(1,9) === randomInteger(1,9)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
         effect(`ballExtraSpeed`, Infinity);
         if (_info.infiniteTime === 0)_info.infinityEffects.add(`ballExtraSpeed`);
-        console.log(123);
     },
     function (cords){
         document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${100*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px;"></div>`);
