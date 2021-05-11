@@ -977,7 +977,6 @@ _info.difficulties = [
         if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
         else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,4) === randomInteger(1,4)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
-        removeEffects();
         pauseGame();
         _info.infinityEffects.clear();
         _info.infinityEffects.add(`ballExtraSpeed`);
@@ -995,7 +994,7 @@ _info.difficulties = [
                             document.getElementById(`timer`).style.width = ``;
                             document.getElementById(`timer`).style.fontSize = ``;
                             resetGame();
-                            document.addEventListener(`resetGame`, effect.bind(null,`ballExtraSpeed`, Infinity), {once: true});
+                            document.addEventListener(`resetGame`, ()=>{ removeEffects();effect(`ballExtraSpeed`, Infinity);}, {once: true});
                             _info.actualDifficulty++;
                             document.removeEventListener(`pointerdown`, preventAll, true);
                             _info.vectorSpeed = _info.vectorSpeed*2;
