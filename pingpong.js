@@ -792,13 +792,13 @@ function resetGame(){
         if (i === 0) {
             clearInterval(n);
             r = setTimeout(()=>{
-                document.dispatchEvent(new Event(`resetGame`));
                 a = setInterval(()=>{
                     ballMove(_info.vector);
                     checkTouch([ball.getBoundingClientRect().x, ball.getBoundingClientRect().y], _info.vector)
                 }, 6);
                 if (_info.infiniteMode) infiniteTimeout=setInterval(addRandom, infiniteTime);
                 restoreEffects();
+                document.dispatchEvent(new Event(`resetGame`));
             }, 2000)
         }
     }, 1000);
