@@ -411,7 +411,7 @@ body>p{
         flex-basis: calc(100% - 20px);
     }
 }
-@media screen and (max-aspect-ratio: 3/5){
+@media screen and (max-aspect-ratio: 1/1){
     #pitch{
         width: 100vw;
         height: calc(100vw * 3 / 2);
@@ -587,6 +587,31 @@ body>p{
 }
 #kickerIn{
     touch-action: none;
+}
+@media screen and (min-aspect-ratio: 4/7) and (max-aspect-ratio: 1/1){
+    #menu h2{
+        font-size: calc(100vw * 3 / 2 / 18);
+    }
+    #menu h2:last-of-type{
+        font-size: calc(100vw * 3 / 2 / 22);
+        text-indent: 0;
+        text-align: center;
+    }
+    #menu h2:first-of-type{
+        font-size: calc(100vw * 3 / 2 / 16);
+    }
+    #menu p{
+        font-size: calc(100vw * 3 / 2 / 33);!important;
+    }
+    .level{
+        flex-basis: 7.5vh;
+        height: 7.5vh;
+        font-size: 4.7vh;
+        margin: 1.5vh;
+    }
+    #scoreCover{
+        left: 72px;
+    }
 }
 * {
     -webkit-touch-callout: none;

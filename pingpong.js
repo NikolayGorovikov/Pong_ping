@@ -5,6 +5,61 @@ if (document.getElementById(`modes`).getBoundingClientRect().width == 0){
     document.getElementById(`pitch`).style.top = window.innerHeight-window.innerWidth*(3/2)*(16/18)+`px`;
     document.getElementById(`effects`).style.height = (window.innerHeight - window.innerWidth * (3 / 2) * (16 / 18)) - (55 + window.innerWidth * (3 / 40)) - 10 + `px`;
     document.querySelector(`#menu .notice`).style.height = window.innerHeight + `px`;
+    if (document.getElementById(`effects`).getBoundingClientRect().height <  66.01 ){
+        document.getElementById(`effects`).style.height = `66px`;
+        document.getElementById(`pitch`).style.top = 55 + window.innerWidth * 3 / 2 / 20 + 76 + `px`;
+        document.getElementById(`pitch`).style.height = window.innerHeight - (55 + window.innerWidth * 3 / 2 / 20 + 76)*(10/15) + `px`;
+        document.getElementById(`pitch`).style.width = parseFloat(document.getElementById(`pitch`).style.height)/3*2+`px`;
+        document.getElementById(`pitch`).style.left = window.innerWidth/2 - parseFloat(document.getElementById(`pitch`).style.width)/2 +`px`;
+        document.head.insertAdjacentHTML(`beforeend`, `<style>
+            #kickerIn{
+        width: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 5);
+        height: calc(14 * (${document.getElementById(`pitch`).getBoundingClientRect().width}px / 5) / 80);
+        border: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 120) black solid;
+        border-radius: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 150);
+        bottom: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px * 3 / 10);
+        touch-action: none;
+    }
+    #ball{
+        width: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 20);
+        height: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 20);
+        border: black calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 150) solid;
+    }
+    #lose{
+        height: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px * 3 / 10 - ${document.getElementById(`pitch`).getBoundingClientRect().width}px / 20);
+    }
+    .item,.itemClone{
+        border-radius: calc((${document.getElementById(`pitch`).getBoundingClientRect().width}px * 3 / 2) / 150);
+        width: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 8);
+        height: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 20);
+    }
+    .effect{
+        width: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 20);
+        height: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 20);
+        border: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 300) black solid;
+    }
+    .leftGun{
+        width: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 60);
+        height: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 30);
+        background-color: black;
+        position: absolute;
+        left: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 120);
+        bottom:  calc(14 * (${document.getElementById(`pitch`).getBoundingClientRect().width}px / 5) / 80 - (${document.getElementById(`pitch`).getBoundingClientRect().width}px / 60));
+    }
+    .rightGun{
+        width: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 60);
+        height: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 30);
+        background-color: black;
+        position: absolute;
+        right: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 120);
+        bottom:  calc(14 * (${document.getElementById(`pitch`).getBoundingClientRect().width}px / 5) / 80 - (${document.getElementById(`pitch`).getBoundingClientRect().width}px / 60));
+    }
+    .smallBall{
+        width: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 60);
+        height: calc(${document.getElementById(`pitch`).getBoundingClientRect().width}px / 60);
+    }
+        </style>`);
+    }
 }
 if (document.documentElement.clientWidth< 800) document.getElementById(`modes`).style.display = `none`;
 console.log(document.getElementById(`modes`).style.display, document.documentElement.clientWidth);
@@ -936,7 +991,7 @@ _info.difficulties = [
         if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
         else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,4) === randomInteger(1,4)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
-        if (_info.infiniteTime === 0)effect(`hideItems`, Infinity);
+        if (_info.infiniteTime === 0) effect(`hideItems`, Infinity);
         _info.infinityEffects.add(`hideItems`);
     },
     function (cords){
