@@ -173,14 +173,10 @@ function restoreAllEffectPoints(){
     }
 }
 function effect(type, timeEffect = _info.effects[type+`Time`]){
-    console.log(12222222222222222);
     let time = _info.effects[type+`Timer`];
-    console.log(`in effect`);
     _info.effects[type+`Timer`] += timeEffect;
     if (_info.effects[type+`MaxTime`] < _info.effects[type+`Timer`]) _info.effects[type+`Timer`] -= timeEffect;
     if (time <= 0){
-        console.log(_info.effects[type+`Description`]);
-        console.log(`give time`);
         let descriptor = `<div class="effectInfo" id="${type}Holder"><div><div class="effectImg ${type}"></div><div class="effectText"><h1>${_info.effects[type+`MainName`]}</h1><p class="timeCenter"><span class="forPC">${_info.effects[type+`Description`]}: </span><span class="timeHolder">${(_info.effects[type+`Timer`]/1000).toFixed(1)}сек</span></p><div></div>`;
         document.getElementById(`effects`).insertAdjacentHTML(`beforeend`, descriptor);
         // document.getElementById(`${type}Holder`).scrollIntoView(true);
@@ -447,7 +443,10 @@ function deskGunBegin(){
     _info.data.gunInterval2 = setInterval(moveAllGun, 16);
 }
 function moveAllGun(){
-    console.log(`moveIt`);
+    if (!document.querySelectorAll(`.smallBall`).length && !_info.data.gunStart){
+        clearInterval(_info.data.gunInterval2);
+        return;
+    }
     for (let i of document.querySelectorAll(`.smallBall`)){
         (function (elem){
             if (parseFloat(elem.style.top)<0) {elem.remove(); return;}
@@ -462,7 +461,6 @@ function moveAllGun(){
 let deskGunEnd = function () {
     _info.data.gunStart = false;
     clearInterval(_info.data.gunInterval);
-    clearInterval(_info.data.gunInterval2);
     document.getElementById(`kickerIn`).innerHTML = ``;
 }
 document.addEventListener(`lose`, function (){
@@ -706,22 +704,6 @@ function checkTouch(position, vector){
     let width = ball.getBoundingClientRect().width;
     document.getElementById(`ball`).style.display = `none`;
     try{
-        if (vector[1] > 0 && vector[0] > 0){
-            let elem = document.elementFromPoint(position[0]+width/2+width/2/Math.SQRT2, position[1] + width/2 - width/2/Math.SQRT2);
-            if (elem !== pitch && !elem?.classList?.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); vector[1]=-vector[1]; vector[0]=-vector[0]; touch(elem);}
-        }
-        else if (vector[1] > 0 && vector[0] < 0){
-            let elem = document.elementFromPoint(position[0]+width/2-width/2/Math.SQRT2, position[1] + width/2 - width/2/Math.SQRT2);
-            if (elem !== pitch && !elem?.classList?.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); vector[1]=-vector[1]; vector[0]=-vector[0]; touch(elem);}
-        }
-        else if (vector[1] < 0 && vector[0] > 0){
-            let elem = document.elementFromPoint(position[0]+width/2+width/2/Math.SQRT2, position[1] + width/2 + width/2/Math.SQRT2);
-            if (elem !== pitch && !elem?.classList?.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); vector[1]=-vector[1]; vector[0]=-vector[0]; touch(elem);}
-        }
-        else if (vector[1] < 0 && vector[0] < 0){
-            let elem = document.elementFromPoint(position[0]+width/2-width/2/Math.SQRT2, position[1] + width/2 + width/2/Math.SQRT2)
-            if (elem !== pitch && !elem?.classList?.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); vector[1]=-vector[1]; vector[0]=-vector[0]; touch(elem);}
-        }
         if (vector[1]>0){
             let elem = document.elementFromPoint(position[0]+width/2, position[1])
             if (elem !== pitch && !elem?.classList?.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); _info.vector[1]=-_info.vector[1]; touch(elem)}
@@ -765,6 +747,22 @@ function checkTouch(position, vector){
         else{
             let elem = document.elementFromPoint(position[0], position[1]+width/2)
             if (elem !== pitch && !elem?.classList?.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector);_info.vector[0]=-_info.vector[0]; touch(elem)}
+        }
+        if (vector[1] > 0 && vector[0] > 0){
+            let elem = document.elementFromPoint(position[0]+width/2+width/2/Math.SQRT2, position[1] + width/2 - width/2/Math.SQRT2);
+            if (elem !== pitch && !elem?.classList?.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); vector[1]=-vector[1]; vector[0]=-vector[0]; touch(elem);}
+        }
+        else if (vector[1] > 0 && vector[0] < 0){
+            let elem = document.elementFromPoint(position[0]+width/2-width/2/Math.SQRT2, position[1] + width/2 - width/2/Math.SQRT2);
+            if (elem !== pitch && !elem?.classList?.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); vector[1]=-vector[1]; vector[0]=-vector[0]; touch(elem);}
+        }
+        else if (vector[1] < 0 && vector[0] > 0){
+            let elem = document.elementFromPoint(position[0]+width/2+width/2/Math.SQRT2, position[1] + width/2 + width/2/Math.SQRT2);
+            if (elem !== pitch && !elem?.classList?.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); vector[1]=-vector[1]; vector[0]=-vector[0]; touch(elem);}
+        }
+        else if (vector[1] < 0 && vector[0] < 0){
+            let elem = document.elementFromPoint(position[0]+width/2-width/2/Math.SQRT2, position[1] + width/2 + width/2/Math.SQRT2)
+            if (elem !== pitch && !elem?.classList?.contains(`noHit`)) {_info.previousVector = [].concat(_info.vector); vector[1]=-vector[1]; vector[0]=-vector[0]; touch(elem);}
         }
     }
     catch (error){
@@ -844,7 +842,7 @@ function addRandom(){
     freePlaceSet.delete(item);
     _info.difficulties[_info.actualDifficulty](cords);
     _info.infiniteTime+=infiniteTime;
-    if (_info.infiniteTime > 25000 && _info.difficulties.length-1>_info.actualDifficulty) {
+    if (_info.infiniteTime > 5000 && _info.difficulties.length-1>_info.actualDifficulty) {
         _info.actualDifficulty++;
         clearInterval(infiniteTimeout);
         if (infiniteTime < 400) infiniteTime-=0;
@@ -979,8 +977,8 @@ _info.difficulties = [
         if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
         else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,4) === randomInteger(1,4)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
+        removeEffects();
         pauseGame();
-        removeAllEffects();
         _info.infinityEffects.clear();
         _info.infinityEffects.add(`ballExtraSpeed`);
         document.getElementById(`timer`).style.display = `block`;
@@ -997,7 +995,7 @@ _info.difficulties = [
                             document.getElementById(`timer`).style.width = ``;
                             document.getElementById(`timer`).style.fontSize = ``;
                             resetGame();
-                            effect(`ballExtraSpeed`, Infinity);
+                            document.addEventListener(`resetGame`, effect.bind(null,`ballExtraSpeed`, Infinity), {once: true});
                             _info.actualDifficulty++;
                             document.removeEventListener(`pointerdown`, preventAll, true);
                             _info.vectorSpeed = _info.vectorSpeed*2;
