@@ -848,10 +848,10 @@ function addRandom(){
     freePlaceSet.delete(item);
     _info.difficulties[_info.actualDifficulty](cords);
     _info.infiniteTime+=infiniteTime;
-    if (_info.infiniteTime > 20000 && _info.difficulties.length-1>_info.actualDifficulty) {
+    if (_info.infiniteTime > 25000 && _info.difficulties.length-1>_info.actualDifficulty) {
         _info.actualDifficulty++;
         clearInterval(infiniteTimeout);
-        if (infiniteTime < 400) return;
+        if (infiniteTime < 400) infiniteTime-=0;
         else if (infiniteTime <= 500) infiniteTime-=50;
         else if (infiniteTime <= 700) infiniteTime-=100;
         else if (infiniteTime <= 1000) infiniteTime-=150;
@@ -949,7 +949,7 @@ _info.difficulties = [
     function (cords){
         document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
         makeColor(document.querySelector(`.item:first-of-type`));
-        if (randomInteger(1,3) === randomInteger(1,3)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
+        if (randomInteger(1,4) === randomInteger(1,4)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
         if (_info.infiniteTime === 0)effect(`brokenGame`, Infinity);
         _info.infinityEffects.add(`brokenGame`);
     },
@@ -971,8 +971,10 @@ _info.difficulties = [
         makeColor(document.querySelector(`.item:first-of-type`));
         if (randomInteger(1,4) === randomInteger(1,4)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
         pauseGame();
+        removeAllEffects();
+        _info.infinityEffects.clear();
         document.getElementById(`timer`).style.display = `block`;
-        document.getElementById(`timer`).style.width = `100%`;
+        document.getElementById(`timer`).style.width = `90%`;
         document.getElementById(`timer`).style.fontSize = `calc(100vw * 3 / 2 / 16)`;
         document.addEventListener(`pointerdown`, preventAll, true);
         setTimeout(()=>{
@@ -991,7 +993,7 @@ _info.difficulties = [
                             _info.vector = [Math.sqrt(_info.vectorSpeed)/Math.SQRT2, Math.sqrt(_info.vectorSpeed)/Math.SQRT2];
                             _info.previousVector = [].concat(_info.vector);
                             _info.maxLeft = _info.vectorSpeed*7/8;
-                        }, talk(document.getElementById(`timer`), `Хм, думаю что гиперскорость тебе поможет)`))
+                        }, talk(document.getElementById(`timer`), `Хм, думаю что шар побыстрее тебе поможет, и отсутствие эффектов тоже`))
                     }, talk(document.getElementById(`timer`), `Но с этим нужно заканчивать.`)
                 )
             }, talk(document.getElementById(`timer`), `Ты смело можешь собой гордиться`))
