@@ -842,7 +842,7 @@ function addRandom(){
     freePlaceSet.delete(item);
     _info.difficulties[_info.actualDifficulty](cords);
     _info.infiniteTime+=infiniteTime;
-    if (_info.infiniteTime > 5000 && _info.difficulties.length-1>_info.actualDifficulty) {
+    if (_info.infiniteTime > 25000 && _info.difficulties.length-1>_info.actualDifficulty) {
         _info.actualDifficulty++;
         clearInterval(infiniteTimeout);
         if (infiniteTime < 400) infiniteTime-=0;
