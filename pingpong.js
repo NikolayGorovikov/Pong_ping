@@ -126,7 +126,7 @@ function stopEffect(effect){
     _info.effects[effect+`Interval`] = undefined;
     if (typeof _info.effects[effect+`DoFinish`] === `function`) _info.effects[effect+`DoFinish`]();
     _info.effects[effect+`Timer`] = 0;
-    document.getElementById(effect+`Holder`).remove();
+    if (document.getElementById(effect+`Holder`)) document.getElementById(effect+`Holder`).remove();
 }
 function removeEffect(effect){
     clearEffectInterval(effect);
@@ -350,7 +350,10 @@ function hideItemsBegin(){
     _info.visible = `hidden`;
 }
 function hideItemsEnd(){
-    document.querySelectorAll(`.item`).forEach((i)=>i.style.backgroundColor = i.dataset.specialColor);
+    document.querySelectorAll(`.item`).forEach((i)=>{
+        if (i.dataset.specialColor) i.style.backgroundColor = i.dataset.specialColor
+        else makeColor(i);
+    });
     _info.visible = `visible`;
 }
 function biggerBallBegin(){
@@ -424,67 +427,66 @@ function brokenJumpBegin(){
 function brokenJumpEnd(){
     _info.jumpModifier = undefined;
 }
+function gunAdd() {
+    if (_info.effectsPaused) return;
+    if (_info.data.i%2-1) {
+        let elem = `<div class="smallBall noHit" style="left: ${parseFloat(document.getElementById(`kickerIn`).style.left)+parseFloat(getComputedStyle(document.querySelector(`.leftGun`)).left) + pitch.getBoundingClientRect().width/120}px; top: ${parseFloat(getComputedStyle(document.getElementById(`kickerIn`)).top)-pitch.getBoundingClientRect().width/20}px;"></div>`;
+        document.getElementById(`pitch`).insertAdjacentHTML(`beforeend`,elem);
+    }
+    else{
+        let elem = `<div class="smallBall noHit" style="left: ${parseFloat(document.getElementById(`kickerIn`).style.left)+parseFloat(getComputedStyle(document.querySelector(`.rightGun`)).left)+pitch.getBoundingClientRect().width/120}px; top: ${parseFloat(getComputedStyle(document.getElementById(`kickerIn`)).top)-20}px;"></div>`;
+        document.getElementById(`pitch`).insertAdjacentHTML(`beforeend`,elem);
+    }
+    _info.data.i++;
+}
 function deskGunBegin(){
+    _info.data.gunStart = true;
     document.getElementById(`kickerIn`).insertAdjacentHTML(`afterbegin`, `<div class="leftGun noHit"></div><div class="rightGun noHit"></div>`);
-    let i = 1;
-    _info.data.gunIntervals = new Set();
-    _info.data.gunInterval = setInterval(
-        function () {
-            if (_info.effectsPaused) return;
-            if (i%2-1) {
-                let elem = `<div class="smallBall noHit" style="left: ${parseFloat(document.getElementById(`kickerIn`).style.left)+parseFloat(getComputedStyle(document.querySelector(`.leftGun`)).left) + pitch.getBoundingClientRect().width/120}px; top: ${parseFloat(getComputedStyle(document.getElementById(`kickerIn`)).top)-pitch.getBoundingClientRect().width/20}px;"></div>`;
-                document.getElementById(`pitch`).insertAdjacentHTML(`beforeend`,elem);
-                elem = document.querySelector(`#pitch .smallBall:last-of-type`);
-                let a = setInterval(
-                    function (){
-                        if (_info.effectsPaused) return;
-                        if (parseFloat(elem.style.top)<0) {clearInterval(a); _info.data.gunIntervals.delete(a);elem.remove(); return;}
-                        let item = document.elementFromPoint(elem.getBoundingClientRect().right, elem.getBoundingClientRect().y)
-                        if (item.classList.contains(`item`)) {elemTouch(item, true); clearInterval(a); elem.remove();_info.data.gunIntervals.delete(a);return}
-                        item = document.elementFromPoint(elem.getBoundingClientRect().x, elem.getBoundingClientRect().y)
-                        if (item.classList.contains(`item`)) {elemTouch(item, true); clearInterval(a); elem.remove();_info.data.gunIntervals.delete(a); return}
-                        elem.style.top = parseFloat(elem.style.top)-3*(pitch.getBoundingClientRect().width/400)+`px`;
-                    }, 10
-                );
-                _info.data.gunIntervals.add(a);
-            }
-            else{
-                let elem = `<div class="smallBall noHit" style="left: ${parseFloat(document.getElementById(`kickerIn`).style.left)+parseFloat(getComputedStyle(document.querySelector(`.rightGun`)).left)+pitch.getBoundingClientRect().width/120}px; top: ${parseFloat(getComputedStyle(document.getElementById(`kickerIn`)).top)-20}px;"></div>`;
-                document.getElementById(`pitch`).insertAdjacentHTML(`beforeend`,elem);
-                elem = document.querySelector(`#pitch .smallBall:last-of-type`);
-                let a = setInterval(
-                    function (){
-                        if (_info.effectsPaused) return;
-                        if (parseFloat(elem.style.top)<0) {clearInterval(a); _info.data.gunIntervals.delete(a);elem.remove(); return;}
-                        let item = document.elementFromPoint(elem.getBoundingClientRect().right, elem.getBoundingClientRect().y)
-                        if (item.classList.contains(`item`)) {elemTouch(item, true); clearInterval(a); elem.remove();_info.data.gunIntervals.delete(a);return}
-                        item = document.elementFromPoint(elem.getBoundingClientRect().x, elem.getBoundingClientRect().y)
-                        if (item.classList.contains(`item`)) {elemTouch(item, true); clearInterval(a); elem.remove();_info.data.gunIntervals.delete(a); return}
-                        elem.style.top = parseFloat(elem.style.top)-3*(pitch.getBoundingClientRect().width/400)+`px`;
-                    }, 10
-                );
-                _info.data.gunIntervals.add(a);
-            }
-            i++;
-        }, 150
-    );
+    _info.data.i = 0;
+    _info.data.gunInterval = setInterval(gunAdd, 150);
+    _info.data.gunInterval2 = setInterval(moveAllGun, 16);
+}
+function moveAllGun(){
+    console.log(`moveIt`);
+    for (let i of document.querySelectorAll(`.smallBall`)){
+        (function (elem){
+            if (parseFloat(elem.style.top)<0) {elem.remove(); return;}
+            let item = document.elementFromPoint(elem.getBoundingClientRect().right, elem.getBoundingClientRect().y)
+            if (item.classList.contains(`item`)) {elemTouch(item, true);elem.remove();return}
+            item = document.elementFromPoint(elem.getBoundingClientRect().x, elem.getBoundingClientRect().y)
+            if (item.classList.contains(`item`)) {elemTouch(item, true);elem.remove();return}
+            elem.style.top = parseFloat(elem.style.top)-3*1.6*(pitch.getBoundingClientRect().width/400)+`px`;
+        })(i);
+    }
 }
 let deskGunEnd = function () {
+    _info.data.gunStart = false;
     clearInterval(_info.data.gunInterval);
+    clearInterval(_info.data.gunInterval2);
     document.getElementById(`kickerIn`).innerHTML = ``;
 }
 document.addEventListener(`lose`, function (){
-    if (!_info.data.gunIntervals) return;
-    for (let i of _info.data.gunIntervals) clearInterval(i);
+    if (!_info.data.gunStart) return;
     for (let i of document.querySelectorAll(`.smallBall`)) i.remove();
 });
 document.addEventListener(`reset`, function (){
-    if (!_info.data.gunIntervals) return;
-    for (let i of _info.data.gunIntervals) clearInterval(i);
+    if (!_info.data.gunStart) return;
     for (let i of document.querySelectorAll(`.smallBall`)) i.remove();
 });
+document.addEventListener(`pause`,function (){
+    console.log(`pause??`, !_info.data.gunStart);
+    if (!_info.data.gunStart) return;
+    console.log(`stopped??`);
+    clearInterval(_info.data.gunInterval);
+    clearInterval(_info.data.gunInterval2);
+});
+document.addEventListener(`resetGame`, function () {
+    if (!_info.data.gunStart) return;
+    _info.data.gunInterval = setInterval(gunAdd, 200);
+    _info.data.gunInterval2 = setInterval(moveAllGun, 16);
+})
 // _info.addNewEffect(`brokenJump`, 8000, brokenJumpBegin, brokenJumpEnd);
-_info.addNewEffect(`deskGun`, 5000, deskGunBegin, deskGunEnd, `Доска-пулемет`);
+_info.addNewEffect(`deskGun`, 6000, deskGunBegin, deskGunEnd, `Доска-пулемет`);
 _info.addNewEffect(`brokenGame`, 8000, brokenBegin, brokenEnd, `Сломанная игра`);
 _info.addNewEffect(`poison`, 5000, randomItems, removePoisonedItems, `Ядовитый шар`, `Фишки помрут через`, 5000);
 _info.addNewEffect(`noDead`, 10000, ()=>document.addEventListener(`lose`, regen), ()=>document.removeEventListener(`lose`, regen), `Бессметрите`);
@@ -623,12 +625,6 @@ function elemTouch(elem, preventEffects){
     if (Number(document.getElementById(`record`).innerHTML) < Number(document.getElementById(`score`).innerHTML) && _info.infiniteMode) document.getElementById(`record`).innerHTML = document.getElementById(`score`).innerHTML;
     if (_info.infiniteMode){
         freePlaceSet.add(Number((parseFloat(elem.style.left)/(pitch.getBoundingClientRect().width/8)).toFixed(0))+8*(parseFloat(elem.style.top)/(pitch.getBoundingClientRect().width/20)).toFixed(0));
-        console.log(`.............................`);
-        console.log(elem);
-        console.log(elem.style.left, (pitch.getBoundingClientRect().width/8));
-        console.log((parseFloat(elem.style.left)/(pitch.getBoundingClientRect().width/8)).toFixed(0), 8*(parseFloat(elem.style.top)/(pitch.getBoundingClientRect().width/20)).toFixed(0));
-        console.log(Number((parseFloat(elem.style.left)/(pitch.getBoundingClientRect().width/8)).toFixed(0))+8*(parseFloat(elem.style.top)/(pitch.getBoundingClientRect().width/20)).toFixed(0))
-        console.log(`.............................`);
 
     }
     if (elem.matches(`[data-effecttype]`)){
@@ -669,6 +665,7 @@ function pauseGame(){
     clearTimeout(r);
     clearInterval(infiniteTimeout);
     _info.stop = true;
+    document.dispatchEvent(new Event(`pause`));
     document.getElementById(`kickerIn`).dispatchEvent(new PointerEvent(`pointerup`, {isPrimary:true}));
     document.getElementById(`timer`).style.display = `none`;
     clearInterval(a);
@@ -797,6 +794,7 @@ function resetGame(){
         if (i === 0) {
             clearInterval(n);
             r = setTimeout(()=>{
+                document.dispatchEvent(new Event(`resetGame`));
                 a = setInterval(()=>{
                     ballMove(_info.vector);
                     checkTouch([ball.getBoundingClientRect().x, ball.getBoundingClientRect().y], _info.vector)
@@ -841,9 +839,7 @@ document.getElementById(`levels`).addEventListener(`pointerdown`, function (even
 let infiniteTimeout, infiniteTime = 2000, freePlaceSet = new Set();
 function addRandom(){
     if (!freePlaceSet.size) return;
-    let item = Array.from(freePlaceSet)[randomInteger(0, freePlaceSet.size)];
-    console.log(item);
-    console.log(freePlaceSet);
+    let item = Array.from(freePlaceSet)[randomInteger(0, freePlaceSet.size-1)];
     let cords = [(item%8)*pitch.getBoundingClientRect().width/8, Math.trunc(item/8)*pitch.getBoundingClientRect().width/20];
     freePlaceSet.delete(item);
     _info.difficulties[_info.actualDifficulty](cords);
@@ -885,94 +881,108 @@ function infiniteGame(i){
 _info.infinityEffects = new Set();
 _info.difficulties = [
     function (cords){
-        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${100*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
-        makeColor(document.querySelector(`.item:first-of-type`));
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${100*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px;"></div>`);
+        if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
+        else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,10) === randomInteger(1,10)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
     },
     function (cords){
-        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${100*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
-        makeColor(document.querySelector(`.item:first-of-type`));
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${100*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px;"></div>`);
+        if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
+        else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,9) === randomInteger(1,9)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
         effect(`ballExtraSpeed`, Infinity);
         if (_info.infiniteTime === 0)_info.infinityEffects.add(`ballExtraSpeed`);
         console.log(123);
     },
     function (cords){
-        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${100*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
-        makeColor(document.querySelector(`.item:first-of-type`));
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${100*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px;"></div>`);
+        if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
+        else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,8) === randomInteger(1,8)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
         if (_info.infiniteTime === 0)effect(`doubleScore`, Infinity);
         _info.infinityEffects.add(`doubleScore`);
     },
     function (cords){
-        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${100*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
-        makeColor(document.querySelector(`.item:first-of-type`));
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${100*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px;"></div>`);
+        if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
+        else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,7) === randomInteger(1,7)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
         if (_info.infiniteTime === 0)effect(`biggerDesk`, Infinity);
         _info.infinityEffects.add(`biggerDesk`);
     },
     function (cords){
-        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${100*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
-        makeColor(document.querySelector(`.item:first-of-type`));
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${100*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px;"></div>`);
+        if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
+        else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,6) === randomInteger(1,6)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
         if (_info.infiniteTime === 0)effect(`biggerBall`, Infinity);
         _info.infinityEffects.add(`biggerBall`);
         effect(`extraLife`, 0);
     },
     function (cords){
-        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${100*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
-        makeColor(document.querySelector(`.item:first-of-type`));
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${100*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px;"></div>`);
+        if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
+        else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,6) === randomInteger(1,6)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
         if (_info.infiniteTime === 0)effect(`boomHit`, Infinity);
         _info.infinityEffects.add(`boomHit`);
     },
     function (cords){
-        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${200*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
-        makeColor(document.querySelector(`.item:first-of-type`));
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${200*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px;"></div>`);
+        if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
+        else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,5) === randomInteger(1,5)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
     },
     function (cords){
-        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${250*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
-        makeColor(document.querySelector(`.item:first-of-type`));
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${250*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px;"></div>`);
+        if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
+        else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,4) === randomInteger(1,4)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
         if (_info.infiniteTime === 0)effect(`hideItems`, Infinity);
         _info.infinityEffects.add(`hideItems`);
     },
     function (cords){
-        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
-        makeColor(document.querySelector(`.item:first-of-type`));
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px;"></div>`);
+        if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
+        else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,4) === randomInteger(1,4)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
         removeEffect(`hideItems`);
         _info.infinityEffects.delete(`hideItems`);
         effect(`extraLife`, 0);
     },
     function (cords){
-        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
-        makeColor(document.querySelector(`.item:first-of-type`));
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px;"></div>`);
+        if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
+        else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,4) === randomInteger(1,4)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
         if (_info.infiniteTime === 0)effect(`brokenGame`, Infinity);
         _info.infinityEffects.add(`brokenGame`);
     },
     function (cords){
-        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
-        makeColor(document.querySelector(`.item:first-of-type`));
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px;"></div>`);
+        if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
+        else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,4) === randomInteger(1,4)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
         removeEffect(`brokenGame`);
         _info.infinityEffects.delete(`brokenGame`);
         effect(`extraLife`, 0);
     },
     function (cords){
-        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
-        makeColor(document.querySelector(`.item:first-of-type`));
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px;"></div>`);
+        if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
+        else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,3) === randomInteger(1,3)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
     },
     function (cords){
-        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
-        makeColor(document.querySelector(`.item:first-of-type`));
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px;"></div>`);
+        if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
+        else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,4) === randomInteger(1,4)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
         pauseGame();
         removeAllEffects();
         _info.infinityEffects.clear();
+        _info.infinityEffects.add(`ballExtraSpeed`);
         document.getElementById(`timer`).style.display = `block`;
         document.getElementById(`timer`).style.width = `90%`;
         document.getElementById(`timer`).style.fontSize = `calc(100vw * 3 / 2 / 16)`;
@@ -987,6 +997,7 @@ _info.difficulties = [
                             document.getElementById(`timer`).style.width = ``;
                             document.getElementById(`timer`).style.fontSize = ``;
                             resetGame();
+                            effect(`ballExtraSpeed`, Infinity);
                             _info.actualDifficulty++;
                             document.removeEventListener(`pointerdown`, preventAll, true);
                             _info.vectorSpeed = _info.vectorSpeed*2;
@@ -1000,8 +1011,9 @@ _info.difficulties = [
         }, talk(document.getElementById(`timer`), `Неплохо, очень не плохо`));
     },
     function (cords){
-        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${1000*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px; visibility: ${_info.visible}"></div>`);
-        makeColor(document.querySelector(`.item:first-of-type`));
+        document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${1000*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px;"></div>`);
+        if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
+        else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,3) === randomInteger(1,3)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
     },
 ];
