@@ -1,4 +1,3 @@
-alert(1);
 "use strict";
 window.addEventListener("error", function (message){
     document.getElementById("errorInfo").innerHTML = message.message;
