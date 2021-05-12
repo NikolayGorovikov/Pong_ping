@@ -1,6 +1,6 @@
+alert(1);
 "use strict";
 window.addEventListener("error", function (message){
-    alert("error");
     document.getElementById("errorInfo").innerHTML = message.message;
 });
 document.documentElement.style.height = window.innerHeight+`px`;
