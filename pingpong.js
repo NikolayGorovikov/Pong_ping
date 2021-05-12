@@ -1,4 +1,4 @@
-window.addEventListener(`error`, function (message){
+window.addEventListener("error", function (message){
     document.getElementById(`errorInfo`).innerHTML = message.message;
 });
 document.documentElement.style.height = window.innerHeight+`px`;
