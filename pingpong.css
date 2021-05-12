@@ -474,7 +474,7 @@ body>p{
     }
     #scoreCover{
         position: absolute;
-        left: 65px;
+        left: 80px;
         top: 50px;
         width: auto;
         height: auto;
@@ -484,13 +484,13 @@ body>p{
     #hearts {
         position: absolute;
         top: 50px;
-        left: 20px;
+        left: 5%;
         color: black;
         font-size: calc(100vw * 3 / 2 / 20 - 1.2vh);
     }
     #menuButton{
         top: 50px;
-        right: 20px;
+        right: 5%;
         font-size: calc(100vw * 3 / 2 / 20 - 1.2vh);
     }
     #levelName{
@@ -585,6 +585,20 @@ body>p{
         right: 0;
     }
 }
+@media screen and (max-height: 800px){
+    #scoreCover{
+        font-size: calc(100vw * 3 / 2 / 20 - 0.3vh);
+    }
+    #hearts {
+        font-size: calc(100vw * 3 / 2 / 20 - 0.3vh);
+    }
+    #menuButton{
+        font-size: calc(100vw * 3 / 2 / 20 - 0.3vh);
+    }
+    #levelName{
+        font-size: calc(100vw * 3 / 2 / 18 - 0.3vh);
+    }
+}
 #kickerIn{
     touch-action: none;
 }
@@ -610,7 +624,7 @@ body>p{
         margin: 1.5vh;
     }
     #scoreCover{
-        left: 72px;
+        left: 13%;
     }
 }
 * {
