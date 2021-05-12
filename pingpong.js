@@ -1,4 +1,7 @@
 "use strict";
+window.addEventListener(`error`, function (message){
+    document.getElementById(`errorInfo`).innerHTML = message.message;
+});
 document.documentElement.style.height = window.innerHeight+`px`;
 document.body.style.height = window.innerHeight+`px`;
 if (document.getElementById(`modes`).getBoundingClientRect().width == 0){
@@ -999,9 +1002,11 @@ _info.difficulties = [
         if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
         else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,4) === randomInteger(1,4)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
-        removeEffect(`hideItems`);
-        _info.infinityEffects.delete(`hideItems`);
-        effect(`extraLife`, 0);
+        if (_info.infiniteTime === 0){
+            removeEffect(`hideItems`);
+            _info.infinityEffects.delete(`hideItems`);
+            effect(`extraLife`, 0);
+        }
     },
     function (cords){
         document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px;"></div>`);
@@ -1016,9 +1021,11 @@ _info.difficulties = [
         if (_info.visible === `visible` || !_info.visible)makeColor(document.querySelector(`.item:first-of-type`));
         else document.querySelector(`.item:first-of-type`).style.backgroundColor = `transparent`;
         if (randomInteger(1,4) === randomInteger(1,4)) document.querySelector(`.item:first-of-type`).dataset.effecttype = _info.effects.effectTypes[randomInteger(0, _info.effects.effectTypes.length-1)];
-        removeEffect(`brokenGame`);
-        _info.infinityEffects.delete(`brokenGame`);
-        effect(`extraLife`, 0);
+        if (_info.infiniteTime === 0) {
+            removeEffect(`brokenGame`);
+            _info.infinityEffects.delete(`brokenGame`);
+            effect(`extraLife`, 0);
+        }
     },
     function (cords){
         document.getElementById(`pitch`).insertAdjacentHTML(`afterbegin`,`<div class="item" data-score="${300*_info.kf}" style="left: ${cords[0]}px; top: ${cords[1]}px;"></div>`);
