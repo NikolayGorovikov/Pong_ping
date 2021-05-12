@@ -1,5 +1,5 @@
 window.addEventListener("error", function (message){
-    document.getElementById(`errorInfo`).innerHTML = message.message;
+    document.getElementById("errorInfo").innerHTML = message.message;
 });
 document.documentElement.style.height = window.innerHeight+`px`;
 document.body.style.height = window.innerHeight+`px`;
