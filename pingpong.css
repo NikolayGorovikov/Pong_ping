@@ -585,7 +585,7 @@ body>p{
         right: 0;
     }
 }
-@media screen and (max-height: 800px) and (max-width: 800px){
+@media screen and (max-height: 800px) and (max-width: 800px) and (min-aspect-ratio: 1/1){
     #scoreCover{
         font-size: calc(100vw * 3 / 2 / 20 - 0.3vh);
     }
@@ -602,7 +602,7 @@ body>p{
         font-size: calc(100vw * 3 / 2 / 18 - 0.3vh);
     }
 }
-@media screen and (max-height: 800px) and (max-width: 3000px){
+@media screen and (max-height: 800px) and (max-width: 3000px) and (min-aspect-ratio: 1/1){
     #scoreCover{
         font-size: calc(100vw * 3 / 2 / 42 - 0.3vh);
     }
