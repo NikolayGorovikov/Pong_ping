@@ -4,6 +4,16 @@ window.addEventListener("error", function (message){
 });
 document.documentElement.style.height = window.innerHeight+`px`;
 document.body.style.height = window.innerHeight+`px`;
+document.addEventListener(`DOMContentLoaded`, function(){
+    console.log(`loaded`);
+    for (let i of [`png-transparent-skull-and-crossbones-human-skull-symbolism-poison-toxicity-skull-cdr-skull-and-crossbones-human-skull-symbolism.png`, `poiso.png`, `png-transparent-joystick-game-controllers-video-game-computer-icons-xbox-360-joystick-white-electronics-text.png`,
+    `png-transparent-human-behavior-line-white-line-white-text-cloak.png`, `png-transparent-fire-flame-computer-icons-combustibility-and-flammability-campfire-firefighter-photography-monochrome.png`, `png-transparent-eye-symbol-computer-icons-not-if-i-see-you-first-invisibility-eye.png`,
+    `png-transparent-arrow-fast-forward-symbol-computer-icons-arrow-angle-rectangle-triangle.png`, `png-clipart-cross-ankh-ancient-egypt-egyptian-symbol-symbol-miscellaneous-cross.png`, `kisspng-computer-icons-snowflake-portable-network-graphics-39-5b80af87d04038.210824531535160199853.jpg`,
+    `kisspng-computer-icons-clip-art-right-size-5b039b4dd872a4.3719566615269630218866.jpg`, `expand-icon-vector-27.jpg`, `11930734_1920.jpg`, `09257fcd181715bf177eb9f018d22315.png`, `635-6357754_heart-black-shape-comments-love-icon-png-transparent.png`, `66-663406_gatling-gun-icon-machine-gun-icon.png`]){
+        let elem = document.createElement(`img`);
+        elem.src = i;
+    }
+}, {once: true});
 if (document.getElementById(`modes`).getBoundingClientRect().width == 0){
     document.getElementById(`pitch`).style.top = window.innerHeight-window.innerWidth*(3/2)*(16/18)+`px`;
     document.getElementById(`effects`).style.height = (window.innerHeight - window.innerWidth * (3 / 2) * (16 / 18)) - (55 + window.innerWidth * (3 / 40)) - 10 + `px`;

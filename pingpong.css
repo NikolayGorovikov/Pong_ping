@@ -585,7 +585,7 @@ body>p{
         right: 0;
     }
 }
-@media screen and (max-height: 800px){
+@media screen and (max-height: 800px) and (max-width: 800px){
     #scoreCover{
         font-size: calc(100vw * 3 / 2 / 20 - 0.3vh);
     }
@@ -597,6 +597,26 @@ body>p{
     }
     #levelName{
         font-size: calc(100vw * 3 / 2 / 18 - 0.3vh);
+    }
+    #modes{
+        font-size: calc(100vw * 3 / 2 / 18 - 0.3vh);
+    }
+}
+@media screen and (max-height: 800px) and (max-width: 3000px){
+    #scoreCover{
+        font-size: calc(100vw * 3 / 2 / 42 - 0.3vh);
+    }
+    #hearts {
+        font-size: calc(100vw * 3 / 2 / 42 - 0.3vh);
+    }
+    #menuButton{
+        font-size: calc(100vw * 3 / 2 / 42 - 0.3vh);
+    }
+    #levelName{
+        font-size: calc(100vw * 3 / 2 / 50 - 0.3vh);
+    }
+    #modes{
+        font-size: calc(100vw * 3 / 2 / 42 - 0.3vh);
     }
 }
 #kickerIn{
