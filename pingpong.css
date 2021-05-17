@@ -585,7 +585,7 @@ body>p{
         right: 0;
     }
 }
-@media screen and (max-height: 800px) and (max-width: 800px) and (min-aspect-ratio: 1/1){
+@media screen and (max-height: 800px) and (max-width: 800px){
     #scoreCover{
         font-size: calc(100vw * 3 / 2 / 20 - 0.3vh);
     }
